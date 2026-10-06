@@ -228,6 +228,24 @@ function simulator(price, id = "sim") {
 </form>`;
 }
 
+/* carte « coup de cœur » affichée dans l'en-tête de l'accueil */
+function heroCard() {
+  const f = byDate.find(b => b.coupDeCoeur) || byDate[0];
+  const q = B.quartier(f.quartier), rent = f.transaction === "location";
+  const [src, alt] = f.photos[0];
+  return `<aside class="hero-side" aria-label="Coup de cœur de l'agence">
+      <a class="hero-card" href="${B.url(f)}">
+        <span class="hc-media"><img ${photoAttrs(src, 720, 0.7, "360px")} width="720" height="504" alt="${esc(alt)}">${B.plaque(q, "plaque-sm")}</span>
+        <span class="hc-body">
+          <span class="hc-label">${I("heart")}Coup de cœur de l'agence</span>
+          ${B.priceHTML(f.prix, rent, "hc-price")}
+          <span class="hc-title">${esc(B.typeLabel(f))} à ${esc(q.name)}</span>
+          <span class="hc-sub">${esc(f.titre)}</span>
+        </span>
+      </a>
+    </aside>`;
+}
+
 /* ==========================================================================
    ACCUEIL
    ========================================================================== */
@@ -237,9 +255,14 @@ function pageHome() {
   const qs = [...QUARTIERS].sort((a, b) => counts(b.id) - counts(a.id) || b.m2 - a.m2);
   const main = `
 <section class="hero" aria-labelledby="hero-h">
+  <div class="hero-bg" aria-hidden="true">
+    <img ${photoAttrs("photo-1706002027900-a1be40d0627e", 2000, 0.6, "100vw")} width="2000" height="1200" alt="" fetchpriority="high">
+    <div class="shutters"><i></i><i></i></div>
+  </div>
   <div class="wrap hero-in">
     <div class="hero-copy">
       <h1 id="hero-h" class="sr-only">${SITE.name} : appartements, villas et terrains à vendre et à louer à Alger et Oran</h1>
+      <p class="hero-kicker">${B.plaque({ name: "Alger", ar: "الجزائر" }, "plaque-sm")}<span>Agence immobilière à Alger et à Oran, depuis 2011</span></p>
       <form class="sentence" id="sentence" action="/annonces/" method="get">
         <p class="sentence-text">
           Je cherche <span class="pick"><select name="k" aria-label="Type de bien">${sel(B.KINDS, "appartement")}</select></span>
@@ -248,17 +271,20 @@ function pageHome() {
           <span class="pick"><select name="max" aria-label="Budget maximum">${sel(B.BUDGETS[t0].map(v => [v || "", B.budgetLabel(v, t0)]), "")}</select></span>.
         </p>
         <div class="sentence-go">
-          <button class="btn btn-primary btn-lg" type="submit"><span data-hero-count>Voir les annonces</span>${I("chev")}</button>
+          <button class="btn btn-mimosa btn-lg" type="submit"><span data-hero-count>Voir les annonces</span>${I("chev")}</button>
           <p class="sentence-hint" data-hero-hint aria-live="polite"></p>
         </div>
       </form>
-      <p class="hero-lead">Bayt Immobilier vend et loue des appartements, des villas et des terrains à Alger, Oran et Tipaza. Chaque annonce est visitée par l'agence et ses papiers sont vérifiés avant d'être publiée.</p>
+      <nav class="hero-chips" aria-label="Recherches fréquentes">
+        <a href="/annonces/?t=vente&amp;l=q:hydra">Acheter à Hydra</a>
+        <a href="/annonces/?t=location&amp;l=w:alger">Louer à Alger</a>
+        <a href="/annonces/?t=vente&amp;vue=1">Avec vue mer</a>
+        <a href="/annonces/?t=vente&amp;k=villa">Villas</a>
+        <a href="/annonces/?t=vente&amp;k=terrain">Terrains</a>
+        <a href="/annonces/?t=vente&amp;l=w:oran">Oran</a>
+      </nav>
     </div>
-    <figure class="hero-photo">
-      <img ${photoAttrs("photo-1723103639391-f4a06d660b20", 1200, 1.25, "(min-width:1000px) 40vw, 100vw")} width="1200" height="1500" alt="Immeuble blanc aux volets bleus, vu d'en bas" fetchpriority="high">
-      <div class="shutters" aria-hidden="true"><i></i><i></i></div>
-      <figcaption>${B.plaque({ name: "Alger", ar: "الجزائر" }, "plaque-lg")}</figcaption>
-    </figure>
+    ${heroCard()}
   </div>
 </section>
 
@@ -308,12 +334,12 @@ function pageHome() {
         <li><b>Signature</b><span>Promesse de vente, puis acte chez le notaire de votre choix.</span></li>
       </ol>
       <div class="btn-row">
-        <a class="btn btn-primary" href="/estimer/">Estimer mon bien</a>
-        <a class="btn btn-line" href="${B.wa(`${waText}je souhaite vendre ou louer mon bien.`)}" target="_blank" rel="noopener">${I("wa")}En parler sur WhatsApp</a>
+        <a class="btn btn-mimosa" href="/estimer/">Estimer mon bien</a>
+        <a class="btn btn-ghost-light" href="${B.wa(`${waText}je souhaite vendre ou louer mon bien.`)}" target="_blank" rel="noopener">${I("wa")}En parler sur WhatsApp</a>
       </div>
     </div>
     <figure class="sell-photo">
-      <img loading="lazy" ${photoAttrs("photo-1789498883061-667d68fc365d", 960, 1.2, "(min-width:1000px) 40vw, 100vw")} width="960" height="1152" alt="Angle de rue à Alger, immeubles blancs">
+      <img loading="lazy" ${photoAttrs("photo-1723103639391-f4a06d660b20", 960, 1.2, "(min-width:1000px) 40vw, 100vw")} width="960" height="1152" alt="Immeuble blanc aux volets bleus, vu d'en bas">
     </figure>
   </div>
 </section>
@@ -341,8 +367,8 @@ function pageHome() {
   <div class="wrap band-in">
     <h2 id="band-h">Une question sur une annonce ? Nous répondons sur WhatsApp, du samedi au jeudi.</h2>
     <div class="btn-row">
-      <a class="btn btn-light" href="${B.wa(`${waText}j'ai une question.`)}" target="_blank" rel="noopener">${I("wa")}Écrire sur WhatsApp</a>
-      <a class="btn btn-ghost-light" href="tel:${SITE.phone.replace(/\s/g, "")}">${I("phone")}${SITE.phone}</a>
+      <a class="btn btn-primary" href="${B.wa(`${waText}j'ai une question.`)}" target="_blank" rel="noopener">${I("wa")}Écrire sur WhatsApp</a>
+      <a class="btn btn-line" href="tel:${SITE.phone.replace(/\s/g, "")}">${I("phone")}${SITE.phone}</a>
     </div>
   </div>
 </section>`;
@@ -355,10 +381,13 @@ function pageHome() {
 function pageList() {
   const main = `
 <section class="list-top">
-  <div class="wrap list-head">
-    <div>
-      <h1 id="listTitle">Biens à vendre et à louer</h1>
-      <p class="list-count" id="listCount" aria-live="polite">${BIENS.length} annonces</p>
+  <div class="list-band">
+    <div class="wrap list-head">
+      <div>
+        <h1 id="listTitle">Biens à vendre et à louer</h1>
+        <p class="list-count" id="listCount" aria-live="polite">${BIENS.length} annonces</p>
+      </div>
+      <p class="list-note">Chaque annonce est visitée par l'agence et ses papiers sont vérifiés. Le bouton Centimes / DA, en haut de la page, change l'affichage des prix.</p>
     </div>
   </div>
   <form class="filters" id="filters" action="/annonces/" method="get" data-lenis-prevent>
@@ -452,7 +481,8 @@ function pageBien(b) {
     </button>`).join("")}
     <span class="gal-count">${I("grid")}${ph.length} photos</span>
   </div>
-</section>`;
+</section>
+</div>`;
   const sideCard = `
 <div class="contact-card" id="contactCard">
   <div class="cc-price">${B.priceHTML(b.prix, rent, "pr-lg")}${pricePerM2}${rent && b.conditions ? `<p class="cc-cond">${esc(b.conditions)}</p>` : ""}</div>
@@ -475,9 +505,10 @@ function pageBien(b) {
   <p class="cc-ref">Réf. ${b.ref}, publiée le ${fmtDate(b.date)}</p>
 </div>`;
   const main = `
+<div class="bien-top">
 <nav class="crumbs wrap" aria-label="Fil d'Ariane">
   <a href="/annonces/?t=${b.transaction}">${rent ? "Louer" : "Acheter"}</a><span aria-hidden="true">/</span>
-  <a href="/annonces/?t=${b.transaction}&amp;l=w:${q.wilaya.toLowerCase()}">${q.wilaya}</a><span aria-hidden="true">/</span>
+  ${q.wilaya !== q.name ? `<a href="/annonces/?t=${b.transaction}&amp;l=w:${q.wilaya.toLowerCase()}">${q.wilaya}</a><span aria-hidden="true">/</span>` : ""}
   <a href="/annonces/?t=${b.transaction}&amp;l=q:${q.id}">${esc(q.name)}</a>
 </nav>
 ${gallery}
@@ -633,13 +664,13 @@ function pageAgence() {
   ];
   const main = `
 <section class="ag-hero">
+  <div class="hero-bg" aria-hidden="true"><img ${photoAttrs("photo-1789498883061-667d68fc365d", 2000, 0.6, "100vw")} width="2000" height="1200" alt="" fetchpriority="high"></div>
   <div class="wrap ag-hero-in">
     <div class="ag-copy">
       <h1>Une agence à Hydra, une autre à Oran</h1>
       <p class="sec-lead">Depuis 2011, ${SITE.name} accompagne les familles qui achètent, vendent ou louent à Alger et à Oran. Nous visitons chaque bien avant de le publier et nous vérifions ses papiers.</p>
-      <div class="btn-row"><a class="btn btn-primary" href="${B.wa(`${waText}je souhaite prendre rendez-vous à l'agence.`)}" target="_blank" rel="noopener">${I("wa")}Prendre rendez-vous</a><a class="btn btn-line" href="tel:${SITE.phone.replace(/\s/g, "")}">${I("phone")}${SITE.phone}</a></div>
+      <div class="btn-row"><a class="btn btn-mimosa" href="${B.wa(`${waText}je souhaite prendre rendez-vous à l'agence.`)}" target="_blank" rel="noopener">${I("wa")}Prendre rendez-vous</a><a class="btn btn-ghost-light" href="tel:${SITE.phone.replace(/\s/g, "")}">${I("phone")}${SITE.phone}</a></div>
     </div>
-    <figure class="ag-photo"><img ${photoAttrs("photo-1706002027900-a1be40d0627e", 1400, 0.62, "(min-width:1000px) 55vw, 100vw")} width="1400" height="868" alt="La baie d'Alger et la ville au bord de la mer"></figure>
   </div>
 </section>
 <section class="sec offices" aria-labelledby="off-h">
