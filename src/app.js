@@ -155,6 +155,18 @@
   });
 
   /* ======================================================================
+     Classement des quartiers : sur téléphone, les 8 premiers puis un bouton
+     ====================================================================== */
+  const qList = $(".q-list"), qBtn = $("[data-q-toggle]");
+  if (qList && qBtn && matchMedia("(max-width: 599px)").matches && qList.children.length > 8) {
+    qList.classList.add("collapsed"); qBtn.hidden = false;
+    qBtn.addEventListener("click", () => {
+      qList.classList.remove("collapsed"); qBtn.hidden = true;
+      const next = qList.children[8] && qList.children[8].querySelector("a"); if (next) next.focus({ preventScroll: true });
+    });
+  }
+
+  /* ======================================================================
      Simulateur de crédit
      ====================================================================== */
   $$("[data-sim]").forEach(form => {

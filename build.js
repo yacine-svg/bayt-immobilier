@@ -252,7 +252,8 @@ function heroCard() {
 function pageHome() {
   const t0 = "vente";
   const counts = id => BIENS.filter(b => b.quartier === id).length;
-  const qs = [...QUARTIERS].sort((a, b) => counts(b.id) - counts(a.id) || b.m2 - a.m2);
+  const qByPrice = [...QUARTIERS].sort((a, b) => b.m2 - a.m2);
+  const maxM2 = qByPrice[0].m2;
   const main = `
 <section class="hero" aria-labelledby="hero-h">
   <div class="hero-bg" aria-hidden="true">
@@ -306,19 +307,21 @@ function pageHome() {
 <section class="sec quartiers" aria-labelledby="q-h">
   <div class="wrap">
     <div class="sec-head">
-      <h2 id="q-h">Par quartier</h2>
-      <p class="sec-lead">Le prix moyen au mètre carré, d'après les ventes suivies par l'agence, et le nombre d'annonces en ce moment.</p>
+      <h2 id="q-h">Prix au mètre carré, quartier par quartier</h2>
+      <p class="sec-lead">Prix moyen d'un appartement en bon état, d'après les ventes suivies par l'agence. Touchez un quartier pour voir ses annonces.</p>
     </div>
-    <ul class="q-grid">
-      ${qs.map(q => {
+    <ol class="q-list">
+      ${qByPrice.map(q => {
         const n = counts(q.id);
-        return `<li><a class="q-item" href="/annonces/?l=q:${q.id}">
+        return `<li><a class="q-row" href="/annonces/?l=q:${q.id}">
         ${B.plaque(q)}
-        <span class="q-meta"><span class="q-price">${B.priceHTML(q.m2, false, "pr-inline", "cts", " le m²")}</span>
-        <span class="q-count">${n ? `${n} ${n > 1 ? "annonces" : "annonce"}` : "Aucune annonce pour l'instant"}</span></span>
+        <span class="q-bar" aria-hidden="true"><span style="width:${(q.m2 / maxM2 * 100).toFixed(1)}%"></span></span>
+        <span class="q-val"><span class="q-price">${B.priceHTML(q.m2, false, "pr-inline", "cts", " le m²")}</span>
+        <span class="q-count">${n ? (n > 1 ? `Voir les ${n} annonces` : "Voir l'annonce") : "Aucune annonce"}</span></span>
       </a></li>`;
       }).join("")}
-    </ul>
+    </ol>
+    <button class="btn btn-line q-toggle" type="button" data-q-toggle hidden>Voir les ${qByPrice.length} quartiers</button>
   </div>
 </section>
 

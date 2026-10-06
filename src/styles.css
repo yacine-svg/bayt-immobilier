@@ -281,16 +281,33 @@ html:not(.js) .shutters { display: none; }
   radial-gradient(800px 420px at 88% 85%, rgba(31,79,158,.08), transparent 70%),
   var(--grain), #E9EFF6; border-block: 1px solid var(--ligne); }
 .quartiers .plaque { box-shadow: inset 0 0 0 3px var(--volet), inset 0 0 0 4.5px #fff, 0 6px 14px -6px rgba(15,27,45,.45), 0 1px 2px rgba(15,27,45,.3); }
-.q-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 34px 24px; }
-@media (max-width: 599px) { .q-grid { grid-template-columns: 1fr 1fr; gap: 26px 14px; } .q-grid .plaque { padding: 7px 11px 6px; } .q-grid .plaque b { font-size: .86rem; } .q-grid .plaque i { font-size: .66rem; } .q-meta { font-size: .92rem; } }
-.q-item { display: grid; justify-items: start; gap: 12px; text-decoration: none; }
-.q-item .plaque { transition: transform .35s var(--ease); }
-.q-item:hover .plaque { transform: translateY(-3px) rotate(-1deg); }
-.q-meta { display: grid; gap: 2px; }
-.q-price { font-weight: 700; }
-.q-price .pr-main { font-weight: 700; }
-.q-count { color: var(--pierre); font-size: .92rem; }
-.q-item:hover .q-count { color: var(--volet); text-decoration: underline; }
+/* classement des quartiers : plaque, barre du prix au m², lien vers les annonces */
+.q-list { list-style: none; margin: 0; padding: 0; }
+@media (min-width: 1100px) { .q-list { columns: 2; column-gap: clamp(48px, 5vw, 96px); } }
+.q-list li { break-inside: avoid; }
+.q-row { display: grid; grid-template-columns: 180px minmax(0, 1fr) 176px; align-items: center; gap: 20px; padding: 12px 12px; margin-inline: -12px; border-radius: 12px; text-decoration: none; transition: background-color .25s; }
+.q-row:hover, .q-row:focus-visible { background: rgba(255,255,255,.7); }
+.q-row .plaque { justify-self: start; transition: transform .35s var(--ease); }
+.q-row:hover .plaque { transform: rotate(-1.5deg); }
+.q-bar { position: relative; height: 12px; background: rgba(15,27,45,.08); border-radius: 0 4px 4px 0; }
+.q-bar span { position: absolute; inset: 0 auto 0 0; background: var(--volet); border-radius: 0 4px 4px 0; transition: background-color .25s; }
+.q-row:hover .q-bar span { background: var(--volet-d); }
+.q-val { display: grid; justify-items: end; gap: 1px; text-align: right; }
+.q-price { font-weight: 750; white-space: nowrap; }
+.q-price .pr-main { font-weight: 750; }
+.q-count { color: var(--pierre); font-size: .88rem; font-weight: 600; white-space: nowrap; }
+.q-row:hover .q-count { color: var(--volet); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 599px) {
+  .q-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "plaque val" "bar bar"; gap: 10px 12px; padding: 12px 8px; margin-inline: -8px; }
+  .q-row .plaque { grid-area: plaque; padding: 6px 11px 5px; }
+  .q-row .plaque b { font-size: .86rem; }
+  .q-row .plaque i { font-size: .64rem; }
+  .q-bar { grid-area: bar; height: 10px; }
+  .q-val { grid-area: val; }
+  .q-count { display: none; }
+  .q-list.collapsed li:nth-child(n+9) { display: none; }
+  .q-toggle { margin-top: 18px; }
+}
 
 /* vendre */
 .sell { background: var(--slats), var(--grain), var(--volet); color: #fff; }
