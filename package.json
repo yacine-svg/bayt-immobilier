@@ -1,0 +1,13 @@
+{
+  "name": "bayt-immobilier",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site de démonstration d'une agence immobilière à Alger et Oran (Nova Web Dz).",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && node serve.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
