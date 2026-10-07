@@ -55,7 +55,7 @@ All of it is in `src/data.js`.
 | What | Where |
 | --- | --- |
 | Agency name, site address, phone, e-mail, licence number | `SITE` |
-| **WhatsApp number** | `SITE.whatsapp`: international format, no `+`, no spaces (`213561913869`) |
+| **WhatsApp number** | `SITE.whatsapp`: international format, no `+`, no spaces (``) |
 | Offices (address, hours, map position) | `SITE.offices` |
 | Loan calculator defaults (rate, years, down payment) | `SITE.loan` |
 | Neighbourhoods and **average price per m²** | `QUARTIERS` (used by the estimate page and the home page) |
